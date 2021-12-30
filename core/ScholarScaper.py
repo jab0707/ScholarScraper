@@ -4,7 +4,9 @@ import time
 from Publication import *
 baseURL = 'https://scholar.google.com'
 
-
+#The headder is what google scholar looks at to see who is asking for data
+#This may need to be adjusted for each user
+#without this, when using the default, google will often think you are a bot (you are) and block you
 headers = {'authority':'scholar.google.com',
 'method': 'GET',
 'path': '/citations?hl=en&user=k-iFVJAAAAAJ&view_op=list_works&alert_preview_top_rm=2&sortby=pubdate',
@@ -26,23 +28,30 @@ headers = {'authority':'scholar.google.com',
 'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
 'x-client-data': 'CI62yQEIprbJAQjEtskBCKmdygEIwf3KAQjq8ssBCJ75ywEI1vzLAQjmhMwBCLaFzAEIy4nMAQitjswBCNKPzAEI2pDMARirqcoBGI6eywEYh47MAQ=='
 }
+
+#The url for the scholar profile you want to scrape from
 mainPageURL = 'https://scholar.google.com/citations?hl=en&user=k-iFVJAAAAAJ&view_op=list_works&alert_preview_top_rm=2&sortby=pubdate'
 #mainPageURL = 'https://scholar.google.com/citations?hl=en&user=sXhCz3YAAAAJ&view_op=list_works&alert_preview_top_rm=2&sortby=pubdate'
+
+#Go grab the html code from the site
 html_main = requests.get(mainPageURL,headers=headers).text
+#organize the HTML into a workable object
 mainPage = BeautifulSoup(html_main,'lxml')
+#I have it hard coded to know where to look for the articles
 articles = mainPage.find_all('tr',class_='gsc_a_tr')
 
+#Open and clear some documents to store the output
 with open('pubs.bib', 'w') as bibF:
 	bibF.write('')
 
 with open('pubs.txt', 'w') as txtF:
 	txtF.write('')
-	
+
 for article in articles:
 	print('sleeping')
 	time.sleep(2)#need to sleep to prevent google from getting mad at fast requests
 	print()
-	info = article.find('a')
+	info = article.find('a')#hard coded things in the HTML structure for where stuff is found
 	detailsPageURL = baseURL + info.attrs['href']
 	print(f'article found: {info.contents[0]}')
 	html_details = requests.get(detailsPageURL,headers=headers).text
