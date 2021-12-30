@@ -1,4 +1,22 @@
 from dataclasses import dataclass,field
+
+
+class PubGroup():
+	def __init__(self):
+		self.pubs = []
+		self.pubTypes = []
+
+	def __getitem__(self, key):
+        return self.pubs[key]
+
+	def append(self,newPub):
+		self.pubs.append(newPub)
+		newPubType = 'conference' if newPub.journal == '' else 'journal'
+		self.pubTypes.append(newPubType)
+
+
+
+
 @dataclass
 class Publication():
 	

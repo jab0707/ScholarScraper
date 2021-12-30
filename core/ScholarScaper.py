@@ -40,6 +40,8 @@ mainPage = BeautifulSoup(html_main,'lxml')
 #I have it hard coded to know where to look for the articles
 articles = mainPage.find_all('tr',class_='gsc_a_tr')
 
+publicationGroup = PubGroup()
+
 #Open and clear some documents to store the output
 with open('pubs.bib', 'w') as bibF:
 	bibF.write('')
@@ -64,6 +66,7 @@ for article in articles:
 		if fieldType in pub.pub_attrs:
 				setattr(pub,fieldType,det.find('div',class_='gsc_oci_value').text)
 	print(pub)
+	publicationGroup.append(pub)
 	with open('pubs.bib', 'a+') as bibF:
 		bibF.write(pub.printBibEntry('JAB:'))
 		bibF.write('\n\n')
